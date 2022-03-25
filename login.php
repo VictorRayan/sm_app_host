@@ -16,21 +16,32 @@ $pwd = "'123'";
 
 $command = "select * from tb_users where username=".$username. "and pwd=".$pwd;
 $query = $con->query($command);
-printf("\n"."Row number: ".$query->num_rows);
+$return_data = array("status"=>"not");
+
+
+
 
 if($query){
 
-	echo "\n".'Login efetuado com sucesso'."\n";
+	$return_data = array("status"=>"ok");
 
 	while($rows = $query->fetch_assoc()){
 	
-		echo 'id_ -->'.$rows["id"]. ", username --> ".$rows['username']."\n";
+		$return_data = array("id_"=>$rows["id_"], "username"=>$rows['username']);
+	}
+	if($query->num_rows > 1){
+
+		$return_data = array("status"=>"fatal", "id_" => "", "username"=>"");
+
 	}
 	
 }
 else{
 
-	echo "\n".'Credenciais erradas ou falha de comunicação com o servidor'."\n";
+	$return_data = array("status"=>"fail");
 }
+
+echo json_encode($return_data);
+
 
 ?>
